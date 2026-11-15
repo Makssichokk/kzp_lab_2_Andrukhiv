@@ -32,6 +32,19 @@ jobs:
       - name: Check version
         run: java -jar target/katalog-knyzhok-2.0.0.jar --version
 
+      - name: Diagnose
+        if: failure()
+        shell: bash
+        run: |
+          echo "--- src files ---"
+          find src -type f
+          echo "--- jar content ---"
+          jar tf target/katalog-knyzhok-2.0.0.jar
+          echo "--- manifest ---"
+          unzip -p target/katalog-knyzhok-2.0.0.jar META-INF/MANIFEST.MF
+          echo "--- pom artifactIds ---"
+          grep -n "artifactId" pom.xml
+
       - name: Upload JAR
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
